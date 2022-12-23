@@ -68,3 +68,6 @@ RUN mkdir -p storage/framework/cache storage/framework/sessions storage/framewor
 RUN chmod -R 775 /var/www/html/
 RUN chmod 777 -R /var/www/html/public/images/
 RUN chown -R www-data:www-data /var/www/html/public/images/
+
+# CMD php artisan serve --host=0.0.0.0 --port=8000
+# EXPOSE 8000

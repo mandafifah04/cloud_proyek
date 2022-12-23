@@ -15,17 +15,20 @@ services:
     build:
       context: .
       dockerfile: php.dockerfile
-    working_dir: /srv/web
+    working_dir: /var/www/html
     volumes:
-      - ./:/srv/web
+      - ./:/var/www/html
       - /.composer:/.composer
+    ports:
+      - 8020:80
+
   node:
     build:
       context: .
       dockerfile: node.dockerfile
-    working_dir: /srv/web
+    working_dir: /var/www/html
     volumes:
-      - ./:/srv/web
+      - ./:/var/www/html
       - /.npm:/.npm
     command: npm run dev
     ports:
