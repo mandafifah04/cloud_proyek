@@ -1,0 +1,46 @@
+name: Deploy ke VPS
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Pull dari repository ini
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          USERNAME: ${{ secrets.USERNAME }}
+          PORT: ${{ secrets.PORT }}
+          PASSWORD: ${{ secrets.PASSWORD }}
+          script: |
+            cd /home/manda_cloud/cloud_proyek
+            git pull origin main
+
+      - name: Remove semua container dan images yang sudah ada
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          USERNAME: ${{ secrets.USERNAME }}
+          PORT: ${{ secrets.PORT }}
+          PASSWORD: ${{ secrets.PASSWORD }}
+          script: |
+            docker stop $(docker ps -aq)
+            docker rm $(docker ps -aq)
+            docker system prune -a -f
+
+      - name: Build image baru dan container baru
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          USERNAME: ${{ secrets.USERNAME }}
+          PORT: ${{ secrets.PORT }}
+          PASSWORD: ${{ secrets.PASSWORD }}
+          script: |
+            cd /home/manda_cloud/cloud_proyek
+            docker-compose up -d
