@@ -25,7 +25,7 @@ RUN chmod 777 -R /srv/web/storage
 # RUN chmod 777 -R /srv/web/public/images/
 # RUN chown -R www-data:www-data /srv/web/public/images/
 
-RUN chown -R user:www-data /srv/web
+RUN chown -R $user:www-data /srv/web
 RUN find /srv/web -type f -exec chmod 664 {} \;
 RUN chgrp -R www-data storage bootstrap/cache
 RUN chmod -R ug+rwx storage bootstrap/cache
