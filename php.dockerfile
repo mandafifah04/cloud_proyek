@@ -13,15 +13,15 @@ RUN apk add --update-cache git curl zip unzip \
 RUN adduser -u $uid -h /home/$user -D $user $user
 RUN mkdir -p /home/$user/.composer && chown -R $user:$user /home/$user
 
-# RUN mkdir -p /srv/web/storage/framework/cache /srv/web/storage/framework/sessions /srv/web/storage/framework/views /srv/web/bootstrap/cache && \
-#     chown -R www-data:www-data /srv/web/storage /srv/web/bootstrap/cache  
+RUN mkdir -p /srv/web/storage/framework/cache /srv/web/storage/framework/sessions /srv/web/storage/framework/views /srv/web/bootstrap/cache && \
+    chown -R www-data:www-data /srv/web/storage /srv/web/bootstrap/cache  
 
-# RUN chmod 777 -R /srv/web/
-# RUN chmod 777 -R /srv/web/storage/framework/cache
-# RUN chmod 777 -R /srv/web/storage/framework/sessions
-# RUN chmod 777 -R /srv/web/storage/framework/views
-# RUN chmod 777 -R /srv/web/bootstrap/cache
-# RUN chmod 777 -R /srv/web/storage
+RUN chmod 777 -R /srv/web/
+RUN chmod 777 -R /srv/web/storage/framework/cache
+RUN chmod 777 -R /srv/web/storage/framework/sessions
+RUN chmod 777 -R /srv/web/storage/framework/views
+RUN chmod 777 -R /srv/web/bootstrap/cache
+RUN chmod 777 -R /srv/web/storage
 # RUN chmod 777 -R /srv/web/public/images/
 # RUN chown -R www-data:www-data /srv/web/public/images/
 
