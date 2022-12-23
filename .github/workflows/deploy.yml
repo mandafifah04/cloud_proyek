@@ -43,4 +43,5 @@ jobs:
           PASSWORD: ${{ secrets.PASSWORD }}
           script: |
             cd /home/manda_cloud/cloud_proyek
-            docker-compose up -d
+            make down
+            make build
