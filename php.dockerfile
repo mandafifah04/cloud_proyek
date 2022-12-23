@@ -13,4 +13,7 @@ RUN apk add --update-cache git curl zip unzip \
 RUN adduser -u $uid -h /home/$user -D $user $user
 RUN mkdir -p /home/$user/.composer && chown -R $user:$user /home/$user
 
+RUN mkdir -p storage/framework/cache storage/framework/sessions storage/framework/views && \
+    chown -R www-data:www-data /srv/web/storage /srv/web/bootstrap/cache
+
 USER $user
