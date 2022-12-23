@@ -1,28 +1,70 @@
-FROM php:8.1-fpm-alpine
-ARG uid=1000
-ARG user=manda
+#### Step 1 : composer
+FROM laravelsail/php81-composer AS composer
 
-RUN docker-php-ext-install pdo pdo_mysql
+COPY . /var/www/html
+WORKDIR /var/www/html
+RUN composer install
 
-RUN wget https://raw.githubusercontent.com/composer/getcomposer.org/76a7060ccb93902cd7576b67264ad91c8a2700e2/web/installer -O - -q | php -- --quiet \
-  && mv composer.phar /usr/local/bin/composer
+#### Step 2 : php-fpm
+FROM php:8.1-apache
 
-RUN apk add --update-cache git curl zip unzip \
-  && rm -rf /var/cache/apk/*
+# 1. Install development packages and clean up apt cache.
+RUN apt-get update && apt-get install -y \
+    curl \
+    g++ \
+    git \
+    libbz2-dev \
+    libfreetype6-dev \
+    libicu-dev \
+    libjpeg-dev \
+    libmcrypt-dev \
+    libpng-dev \
+    libreadline-dev \
+    sudo \
+    unzip \
+    zip \
+    iputils-ping \
+    nano \
+ && rm -rf /var/lib/apt/lists/*
 
-RUN adduser -u $uid -h /home/$user -D $user $user
-RUN mkdir -p /home/$user/.composer && chown -R $user:$user /home/$user
+# 2. Apache configs + document root.
+RUN echo "ServerName laravel-app.local" >> /etc/apache2/apache2.conf
 
-RUN mkdir -p /srv/web/storage/framework/cache /srv/web/storage/framework/sessions /srv/web/storage/framework/views /srv/web/bootstrap/cache && \
-    chown -R www-data:www-data /srv/web/storage /srv/web/bootstrap/cache  
+ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
+RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
+RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
-RUN chmod 777 -R /srv/web/
-RUN chmod 777 -R /srv/web/storage/framework/cache
-RUN chmod 777 -R /srv/web/storage/framework/sessions
-RUN chmod 777 -R /srv/web/storage/framework/views
-RUN chmod 777 -R /srv/web/bootstrap/cache
-RUN chmod 777 -R /srv/web/storage
-# RUN chmod 777 -R /srv/web/public/images/
-# RUN chown -R www-data:www-data /srv/web/public/images/
+# 3. mod_rewrite for URL rewrite and mod_headers for .htaccess extra headers like Access-Control-Allow-Origin-
+RUN a2enmod rewrite headers
 
-USER $user
+# 4. Start with base PHP config, then add extensions.
+RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
+
+RUN docker-php-ext-install \
+    bcmath \
+    bz2 \
+    calendar \
+    iconv \
+    intl \
+    opcache \
+    pdo_mysql
+
+# Laravel application
+
+COPY . /var/www/html
+# I like to use a dedicated .env file to prive sound defaults
+COPY --from=composer /var/www/html/vendor /var/www/html/vendor
+
+#Gtw
+ARG uid
+RUN useradd -G www-data,root -u 1000 -d /home/manda manda
+RUN mkdir -p /home/manda/.composer && \
+    chown -R manda:manda /home/manda
+
+RUN mkdir -p storage/framework/cache storage/framework/sessions storage/framework/views && \
+    chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+
+#7. chmod the storage directory
+RUN chmod -R 775 /var/www/html/
+RUN chmod 777 -R /var/www/html/public/images/
+RUN chown -R www-data:www-data /var/www/html/public/images/
