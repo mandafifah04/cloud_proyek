@@ -17,6 +17,11 @@ RUN mkdir -p /srv/web/storage/framework/cache /srv/web/storage/framework/session
     chown -R www-data:www-data /srv/web/storage /srv/web/bootstrap/cache  
 
 RUN chmod 777 -R /srv/web/
+RUN chmod 777 -R /srv/web/storage/framework/cache
+RUN chmod 777 -R /srv/web/storage/framework/sessions
+RUN chmod 777 -R /srv/web/storage/framework/views
+RUN chmod 777 -R /srv/web/bootstrap/cache
+RUN chmod 777 -R /srv/web/storage
 # RUN chmod 777 -R /srv/web/public/images/
 # RUN chown -R www-data:www-data /srv/web/public/images/
 
