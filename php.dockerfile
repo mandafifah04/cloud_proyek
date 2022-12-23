@@ -25,6 +25,11 @@ RUN chmod 777 -R /srv/web/storage
 # RUN chmod 777 -R /srv/web/public/images/
 # RUN chown -R www-data:www-data /srv/web/public/images/
 
+RUN chown -R user:www-data /srv/web
+RUN find /srv/web -type f -exec chmod 664 {} \;
+sudo chgrp -R www-data storage bootstrap/cache
+sudo chmod -R ug+rwx storage bootstrap/cache
+
 COPY --chown=www:www . /srv/web
 
 USER $user
