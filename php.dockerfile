@@ -51,7 +51,7 @@ RUN docker-php-ext-install \
 
 # Laravel application
 
-COPY . /var/www/html
+COPY --chown=www:www . /var/www/html
 # I like to use a dedicated .env file to prive sound defaults
 COPY --from=composer /var/www/html/vendor /var/www/html/vendor
 
