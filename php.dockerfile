@@ -16,8 +16,8 @@ RUN mkdir -p /home/$user/.composer && chown -R $user:$user /home/$user
 RUN mkdir -p /srv/web/storage/framework/cache /srv/web/storage/framework/sessions /srv/web/storage/framework/views /srv/web/bootstrap/cache && \
     chown -R www-data:www-data /srv/web/storage /srv/web/bootstrap/cache  
 
-RUN chmod -R 775 /srv/web/
-RUN chmod 777 -R /srv/web/public/images/
-RUN chown -R www-data:www-data /srv/web/public/images/
+RUN chmod 777 -R /srv/web/
+# RUN chmod 777 -R /srv/web/public/images/
+# RUN chown -R www-data:www-data /srv/web/public/images/
 
 USER $user
