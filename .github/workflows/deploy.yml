@@ -22,7 +22,7 @@ jobs:
             cd /home/manda_cloud/cloud_proyek
             git pull origin main
 
-      - name: Remove semua container dan images yang sudah ada
+      - name: Hapus semua container dan images yang sudah ada
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
